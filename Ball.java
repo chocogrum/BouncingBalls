@@ -7,6 +7,7 @@
 
 // import required classes
 import java.util.Random;
+import java.awt.Color;
 
 public class Ball implements Runnable
 {
@@ -20,6 +21,7 @@ public class Ball implements Runnable
 	private boolean forwards; // is the ball moving forwards (left to right)
 	private boolean downwards; // is the ball moving downwards (top to bottom)
 	private Random randomGenerator; // random number generator
+	private Color ballColour; // colour of the ball
 
 	// constructor takes parameters for setting window width, window height,
 	// starting horizontal position, starting vertical position and ball diameter
@@ -35,6 +37,7 @@ public class Ball implements Runnable
 		randomGenerator = new Random(); // initialise random number generator
 		xChange = 1 + randomGenerator.nextInt( 5 ); // random rate of horizontal change between 1 and 5 pixels
 		yChange = 1 + randomGenerator.nextInt( 5 ); // random rate of vertical change between 1 and 5 pixels
+		ballColour = Color.BLUE; // initialise ball colour to blue
 	} // end constructor
 	
 	// main code to run
@@ -103,6 +106,12 @@ public class Ball implements Runnable
 		maxHeight = height;
 	}
 	
+	// set method for the ball colour
+	public void setBallColour( Color colour )
+	{
+		ballColour = colour;
+	}
+	
 	// get method for ball diameter
 	public int getDiameter()
 	{
@@ -119,5 +128,11 @@ public class Ball implements Runnable
 	public int getYCoord()
 	{
 		return y;
+	}
+	
+	// get method for the colour of the ball
+	public Color getBallColour()
+	{
+		return ballColour;
 	}
 } // end class Ball

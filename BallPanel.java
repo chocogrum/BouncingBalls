@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 // class inherits from JPanel
 public class BallPanel extends JPanel
@@ -27,6 +28,7 @@ public class BallPanel extends JPanel
 	private int ballCounter; // track number of balls created
 	private final int MAX_NUMBER_OF_BALLS = 20; // max number of balls that can be created
 	private Ball[] ballArray = new Ball[ MAX_NUMBER_OF_BALLS ]; // declare array of Ball objects
+	private Random randomGenerator; // initialise random number generator
 	
 	// constructor accepts parameters for setting preferred size
 	public BallPanel( int width, int height )
@@ -44,6 +46,7 @@ public class BallPanel extends JPanel
 		addMouseListener( new MouseListener() ); // add mouse listener to panel
 		threadExecutor.execute( repaintTimer ); // execute the repaint timer in one thread
 		ballCounter = 0; // initialise ball counter to zero
+		randomGenerator = new Random(); // initialise random number generator
 	} // end constructor
 
 	public void paintComponent( Graphics g )
@@ -52,11 +55,12 @@ public class BallPanel extends JPanel
 		Graphics2D g2d = ( Graphics2D ) g; // declare Graphics2D object
 		
 		for( Ball ball : ballArray ) // loop through array of balls
-		{
-			g2d.setPaint( Color.BLUE ); // paint the balls in colour blue
-		
+		{		
 			if( ball != null ) // if ball is not null
-			{			
+			{
+				// set paint to the colour of the ball
+				g2d.setPaint( ball.getBallColour() );
+			
 				// paint the ball
 				g2d.fill( new Ellipse2D.Double( ball.getXCoord(), // horizontal position of the ball
 												ball.getYCoord(), // vertical position of the ball
@@ -76,13 +80,22 @@ public class BallPanel extends JPanel
 			if( ballCounter < MAX_NUMBER_OF_BALLS ) // if max number of balls hasn't been reached
 			{
 				// add a new ball to the array
-				ballArray[ ballCounter++ ] = new Ball(  ( int ) getPreferredSize().getWidth(), // set max width
+				ballArray[ ballCounter ] = new Ball(  ( int ) getPreferredSize().getWidth(), // set max width
 								                        ( int ) getPreferredSize().getHeight(), // set max height
 								                        e.getX(), // initial horizontal position determined by mouse
 								                        e.getY(), // initial vertical position determined by mouse
 								                        10 ); // diameter of 10 pixels
+				
+				// set the ball colour to a random colour
+				ballArray[ ballCounter ].setBallColour( new Color( randomGenerator.nextInt( 256 ),
+									     					       randomGenerator.nextInt( 256 ),
+									     					       randomGenerator.nextInt( 256 )
+									     					      )
+									     		      );
 								  
-				threadExecutor.execute( ballArray[ ballCounter - 1 ] ); // execute the ball in its own thread
+				threadExecutor.execute( ballArray[ ballCounter ] ); // execute the ball in its own thread
+				
+				ballCounter++;
 			}
 		} // end method mousePressed
 	} // end inner class MouseListener
