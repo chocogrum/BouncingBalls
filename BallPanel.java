@@ -20,11 +20,13 @@ import java.awt.event.MouseEvent;
 // class inherits from JPanel
 public class BallPanel extends JPanel
 {
-	private Ball ball; // Ball object to represent the bouncing ball
 	private RepaintTimer repaintTimer; // RepaintTimer object to determine how often the ball moves
 	private ExecutorService threadExecutor; // ExecutorService for running threads in parallel
 	private int panelWidth; // width of the panel
 	private int panelHeight; // height of the panel
+	private int ballCounter; // track number of balls created
+	private final int MAX_NUMBER_OF_BALLS = 20; // max number of balls that can be created
+	private Ball[] ballArray = new Ball[ MAX_NUMBER_OF_BALLS ]; // declare array of Ball objects
 	
 	// constructor accepts parameters for setting preferred size
 	public BallPanel( int width, int height )
@@ -40,6 +42,8 @@ public class BallPanel extends JPanel
 		setBackground( Color.WHITE ); // set panel background colour to white
 		setOpaque( true ); // opaque is true so panel background colour can be seen
 		addMouseListener( new MouseListener() ); // add mouse listener to panel
+		threadExecutor.execute( repaintTimer ); // execute the repaint timer in one thread
+		ballCounter = 0; // initialise ball counter to zero
 	} // end constructor
 
 	public void paintComponent( Graphics g )
@@ -47,18 +51,21 @@ public class BallPanel extends JPanel
 		super.paintComponent( g ); // call superclass method
 		Graphics2D g2d = ( Graphics2D ) g; // declare Graphics2D object
 		
-		if( ball != null ) // if ball is not null
+		for( Ball ball : ballArray ) // loop through array of balls
 		{
-			g2d.setPaint( Color.BLUE ); // paint the ball in colour blue
-			
-			// paint the ball
-			g2d.fill( new Ellipse2D.Double( ball.getXCoord(), // horizontal position of the ball
-										    ball.getYCoord(), // vertical position of the ball
-										    ball.getDiameter(), // diameter of the ball
-										    ball.getDiameter() ) // diameter of the ball
-					);
-		}
-	}
+			g2d.setPaint( Color.BLUE ); // paint the balls in colour blue
+		
+			if( ball != null ) // if ball is not null
+			{			
+				// paint the ball
+				g2d.fill( new Ellipse2D.Double( ball.getXCoord(), // horizontal position of the ball
+												ball.getYCoord(), // vertical position of the ball
+												ball.getDiameter(), // diameter of the ball
+												ball.getDiameter() ) // diameter of the ball
+						);
+			} // end if
+		} // end for loop
+	} // end method paintComponent
 	
 	// inner class for mouse listener
 	public class MouseListener extends MouseAdapter
@@ -66,17 +73,16 @@ public class BallPanel extends JPanel
 		// override method mousePressed
 		public void mousePressed( MouseEvent e )
 		{
-			if( ball == null ) // if ball has not been initialised yet
+			if( ballCounter < MAX_NUMBER_OF_BALLS ) // if max number of balls hasn't been reached
 			{
-				// new Ball object
-				ball = new Ball(  ( int ) getPreferredSize().getWidth(), // set max width
-								  ( int ) getPreferredSize().getHeight(), // set max height
-								  e.getX(), // initial horizontal position determined by mouse
-								  e.getY(), // initial vertical position determined by mouse
-								  10 ); // diameter of 10 pixels
+				// add a new ball to the array
+				ballArray[ ballCounter++ ] = new Ball(  ( int ) getPreferredSize().getWidth(), // set max width
+								                        ( int ) getPreferredSize().getHeight(), // set max height
+								                        e.getX(), // initial horizontal position determined by mouse
+								                        e.getY(), // initial vertical position determined by mouse
+								                        10 ); // diameter of 10 pixels
 								  
-				threadExecutor.execute( ball ); // execute the ball in one thread
-				threadExecutor.execute( repaintTimer ); // execute the repaint timer in another thread
+				threadExecutor.execute( ballArray[ ballCounter - 1 ] ); // execute the ball in its own thread
 			}
 		} // end method mousePressed
 	} // end inner class MouseListener
