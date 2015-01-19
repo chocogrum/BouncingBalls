@@ -1,7 +1,7 @@
 // Module 23, Exercise 2
 // Graham Thomas
 // BallPanel.java
-// panel in which a ball bounces
+// panel in which balls can bounce
 
 /* Modify the program in Exercise 1 to add a new ball each time the user clicks the mouse. Provide for a minimum of 20 balls. Randomly choose the color for each new ball. */
 

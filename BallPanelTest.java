@@ -1,7 +1,7 @@
 // Module 23, Exercise 2
 // Graham Thomas
 // BallPanelTest.java
-// class for testing panel with bouncing ball
+// class for testing panel with bouncing balls
 
 /* Modify the program in Exercise 1 to add a new ball each time the user clicks the mouse. Provide for a minimum of 20 balls. Randomly choose the color for each new ball. */
 
